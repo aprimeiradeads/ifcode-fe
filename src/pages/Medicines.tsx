@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -20,6 +21,7 @@ interface Medicine {
 }
 
 const Medicines: React.FC = () => {
+    const navigate = useNavigate();
     const [medicines, setMedicines] = useState<Medicine[]>([]);
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
@@ -29,10 +31,7 @@ const Medicines: React.FC = () => {
     const [durationType, setDurationType] = useState<'sempre' | 'quantidade' | 'data'>('sempre');
     const [durationAmount, setDurationAmount] = useState('');
     const [durationEndDate, setDurationEndDate] = useState('');
-    // idUser removido
     const [times, setTimes] = useState<string[]>(['']);
-    // ...
-    // useEffect para idUser removido
     const [editId, setEditId] = useState<string | null>(null);
 
     const handleAddOrUpdate = (e: React.FormEvent) => {
@@ -68,7 +67,6 @@ const Medicines: React.FC = () => {
         setDurationAmount('');
         setDurationEndDate('');
         setTimes(['']);
-    // idUser removido
     };
 
     const handleEdit = (id: string) => {
@@ -83,7 +81,6 @@ const Medicines: React.FC = () => {
             setDurationAmount(med.durationAmount ? med.durationAmount.toString() : '');
             setDurationEndDate(med.durationEndDate || '');
             setTimes(med.times && med.times.length > 0 ? med.times : ['']);
-            // idUser removido
             setEditId(id);
         }
     };
@@ -100,6 +97,14 @@ const Medicines: React.FC = () => {
                     <span role="img" aria-label="Remédio" style={{ marginRight: 12 }}></span>
                     Medicamentos
                 </h2>
+                <Button
+                    variant="outlined"
+                    color="primary"
+                    onClick={() => navigate('/home')}
+                    style={{ marginBottom: 24, fontWeight: 'bold' }}
+                >
+                    Voltar para Home
+                </Button>
                 <Box component="form"
                     onSubmit={handleAddOrUpdate}
                     sx={{ display: 'flex', flexDirection: 'column', gap: 2, bgcolor: '#fff', borderRadius: 3, p: { xs: 2, sm: 3 }, boxShadow: 2, border: '2px solid #1976d2' }}
@@ -217,7 +222,6 @@ const Medicines: React.FC = () => {
                         )}
                     </div>
                 ))}
-                {/* idUser removido */}
                 <Button
                     type="submit"
                     variant="contained"
