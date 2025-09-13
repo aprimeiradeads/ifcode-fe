@@ -216,7 +216,7 @@ const Medicines: React.FC = () => {
 								inputProps={{ min: 1 }}
 								style={{ width: 100 }}
 							/>
-							<span style={{ fontSize: "1.2rem" }}>dias</span>
+							<span style={{ fontSize: "1.2rem" }}>horas</span>
 						</div>
 					)}
 					<Select
