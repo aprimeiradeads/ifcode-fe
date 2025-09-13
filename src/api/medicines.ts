@@ -55,7 +55,7 @@ const getMedicineById = async (id: string): Promise<Medicine | null> => {
 				}
 			}
 		);
-		return response.data.data;
+		return response.data;
 	} catch (error) {
 		console.error("Erro ao buscar medicamento por ID:", error);
 		return null;
