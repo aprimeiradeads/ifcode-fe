@@ -20,5 +20,6 @@ export interface Medicine {
 	duracao: string;
 	duracaoTempo?: number;
 	duracaoDataFinal?: string;
+	horario?: string[];
 }
 

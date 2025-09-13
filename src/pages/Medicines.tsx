@@ -18,7 +18,7 @@ const Medicines: React.FC = () => {
     const [nome, setNome] = useState("");
     const [descricao, setDescricao] = useState("");
     const [dosagem, setDosagem] = useState("");
-    const [repeticao, setRepeticao] = useState<string>("nao");
+    const [repeticao, setRepeticao] = useState<string>("diario");
     const [repeticaoDias, setRepeticaoDias] = useState("1");
     const [repeticaoSemana, setRepeticaoSemana] = useState("");
     const [duracao, setDuracao] = useState<string>("sempre");
@@ -57,6 +57,7 @@ const Medicines: React.FC = () => {
             duracao: duracao || "",
             duracaoTempo: duracao === "quantidade" ? Number(duracaoTempo) : undefined,
             duracaoDataFinal: duracao === "data" ? duracaoDataFinal : "",
+            horario: times.filter(t => t),
         };
         if (editId !== null) {
             setMedicines(medicines.map((m) => (m.id === editId ? med : m)));
