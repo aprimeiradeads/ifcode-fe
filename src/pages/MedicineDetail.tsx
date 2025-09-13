@@ -36,8 +36,13 @@ const MedicineDetail: React.FC = () => {
   async function handleDelete(medicineId: string) {
     if (window.confirm('Tem certeza que deseja excluir este medicamento?')) {
       try {
+        const token = localStorage.getItem('token');
         const response = await fetch(`https://ifcode-be.onrender.com/remedio/${medicineId}`, {
           method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
         });
         if (!response.ok) throw new Error('Erro ao excluir medicamento');
         setAlert({ type: 'success', message: 'Medicamento excluído com sucesso!' });
