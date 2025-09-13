@@ -8,7 +8,7 @@ export interface Usuario {
 }
 
 export interface Medicine {
-	id: string;
+	id?: string;
 	nome: string;
 	descricao: string;
 	fotoUrl?: string;

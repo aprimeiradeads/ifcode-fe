@@ -32,17 +32,16 @@ const Medicines: React.FC = () => {
         e.preventDefault();
         if (!nome) return;
         const med: Medicine = {
-            id: "",
-            nome,
-            descricao,
-            dosagem,
+            nome: nome || "",
+            descricao: descricao || "",
             fotoUrl: undefined,
-            repeticao,
+            dosagem: dosagem || "",
+            repeticao: repeticao || "",
             repeticaoDias: repeticao === "diario" ? Number(repeticaoDias) : undefined,
-            repeticaoSemana: repeticao === "semanal" ? repeticaoSemana : undefined,
-            duracao,
+            repeticaoSemana: repeticao === "semanal" ? repeticaoSemana : "",
+            duracao: duracao || "",
             duracaoTempo: duracao === "quantidade" ? Number(duracaoTempo) : undefined,
-            duracaoDataFinal: duracao === "data" ? duracaoDataFinal : undefined,
+            duracaoDataFinal: duracao === "data" ? duracaoDataFinal : "",
         };
         if (editId !== null) {
             setMedicines(medicines.map((m) => (m.id === editId ? med : m)));
