@@ -12,7 +12,7 @@ export interface Medicine {
 	nome: string;
 	descricao: string;
 	fotoUrl?: string;
-	usuario: Usuario;
+	usuario?: Usuario;
 	dosagem: string;
 	repeticao: string;
 	repeticaoDias?: number;
