@@ -1,34 +1,27 @@
 import axios from "axios";
-import type { Medicine } from "../types/api";
+import type { Medicine, ApiResponse } from "../types/api";
 
-const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:8080";
-const API_MEDICINES_ENDPOINT = "/medicines";
+const API_BASE_URL = "https://ifcode-be.onrender.com";
+const API_MEDICINES_ENDPOINT = "/remedio/cadastrar";
 
-const getMedicines = async (): Promise<Medicine[]> => {
+
+const addMedicine = async (medicine: Medicine): Promise<ApiResponse<Medicine>> => {
 	try {
-		const response = await axios.get<Medicine[]>(
-			`${API_BASE_URL}${API_MEDICINES_ENDPOINT}`
-		);
-		return response.data;
-	} catch (error) {
-		// Melhorar o tratamento de erros
-		console.error("Erro ao buscar medicamentos:", error);
-		throw error;
-	}
-};
-
-const addMedicine = async (medicine: Medicine): Promise<Medicine> => {
-	try {
-		const response = await axios.post<Medicine>(
+		const response = await axios.post<ApiResponse<Medicine>>(
 			`${API_BASE_URL}${API_MEDICINES_ENDPOINT}`,
-			medicine
+			medicine,
+			{
+				headers: {
+					"Content-Type": "application/json"
+				}
+			}
 		);
+		console.log(medicine);
 		return response.data;
 	} catch (error) {
-		// Melhorar o tratamento de erros
 		console.error("Erro ao adicionar medicamento:", error);
 		throw error;
 	}
 };
 
-export { getMedicines, addMedicine };
+export { addMedicine };

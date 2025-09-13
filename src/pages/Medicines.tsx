@@ -6,6 +6,9 @@ import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
+import Alert from "@mui/material/Alert";
+
+import { addMedicine } from "../api/medicines";
 import type { Medicine } from "../types/api";
 
 const Medicines: React.FC = () => {
@@ -25,6 +28,8 @@ const Medicines: React.FC = () => {
 	const [durationEndDate, setDurationEndDate] = useState("");
 	const [times, setTimes] = useState<string[]>([""]);
 	const [editId, setEditId] = useState<string | null>(null);
+
+	const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
 	const handleAddOrUpdate = (e: React.FormEvent) => {
 		e.preventDefault();
@@ -51,7 +56,16 @@ const Medicines: React.FC = () => {
 			setMedicines(medicines.map((m) => (m.id === editId ? med : m)));
 			setEditId(null);
 		} else {
-			setMedicines([...medicines, med]);
+			addMedicine(med)
+				.then(() => {
+					setAlert({ type: "success", message: "Medicamento salvo com sucesso!" });
+					navigate("/home");
+				})
+				.catch((err) => {
+                    console.log(med);
+					setAlert({ type: "error", message: "Erro ao salvar medicamento." });
+					console.error(err);
+				});
 		}
 		setName("");
 		setDescription("");
@@ -64,31 +78,6 @@ const Medicines: React.FC = () => {
 		setTimes([""]);
 	};
 
-	const handleEdit = (id: string) => {
-		const med = medicines.find((m) => m.id === id);
-		if (med) {
-			setName(med.name);
-			setDescription(med.description);
-			setDosage(med.dosage || "");
-			setRepetition(med.repetition);
-			setRepetitionInterval(
-				med.repetitionInterval ? med.repetitionInterval.toString() : "1"
-			);
-			setDurationType(med.durationType);
-			setDurationAmount(
-				med.durationAmount ? med.durationAmount.toString() : ""
-			);
-			setDurationEndDate(med.durationEndDate || "");
-			setTimes(med.times && med.times.length > 0 ? med.times : [""]);
-			setEditId(id);
-		}
-	};
-
-	const handleDelete = (id: string) => {
-		setMedicines(medicines.filter((m) => m.id !== id));
-		if (editId === id) setEditId(null);
-	};
-
 	return (
 		<Box
 			sx={{
@@ -98,6 +87,15 @@ const Medicines: React.FC = () => {
 				py: 6,
 			}}
 		>
+			{alert && (
+				<Alert
+					severity={alert.type}
+					onClose={() => setAlert(null)}
+					sx={{ position: "fixed", top: 24, left: 0, right: 0, maxWidth: 400, mx: "auto", zIndex: 9999 }}
+				>
+					{alert.message}
+				</Alert>
+			)}
 			<Paper
 				elevation={6}
 				sx={{
@@ -343,182 +341,6 @@ const Medicines: React.FC = () => {
 						{editId !== null ? "Atualizar" : "Adicionar"}
 					</Button>
 				</Box>
-				<ul
-					style={{
-						marginTop: 36,
-						padding: 0,
-						listStyle: "none",
-						width: "100%",
-					}}
-					aria-label="Lista de medicamentos cadastrados"
-				>
-					{medicines.map((med) => (
-						<li
-							key={med.id}
-							style={{
-								marginBottom: 28,
-								padding: "22px 18px",
-								background: "#fff",
-								borderRadius: 16,
-								boxShadow: "0 4px 16px #0002",
-								display: "flex",
-								flexDirection: "column",
-								gap: 12,
-								fontSize: "1.25rem",
-								wordBreak: "break-word",
-								border: "2px solid #1976d2",
-							}}
-							tabIndex={0}
-							aria-label={`Medicamento: ${med.name}`}
-						>
-							<div
-								style={{
-									display: "flex",
-									flexDirection: "row",
-									alignItems: "center",
-									gap: 12,
-								}}
-							>
-								<span
-									role="img"
-									aria-label="Remédio"
-									style={{ fontSize: "2rem" }}
-								>
-									💊
-								</span>
-								<b
-									style={{
-										fontSize: "1.5rem",
-										color: "#003366",
-										fontWeight: 900,
-									}}
-								>
-									{med.name}
-								</b>
-							</div>
-							<div
-								style={{
-									fontSize: "1.1rem",
-									color: "#222",
-									marginTop: 2,
-									lineHeight: 2,
-								}}
-							>
-								{med.description && (
-									<>
-										<b>Descrição:</b> {med.description}{" "}
-										<br />
-									</>
-								)}
-								{/* Dosagem */}
-								{med.dosage && (
-									<>
-										<b>Dosagem:</b> {med.dosage} <br />
-									</>
-								)}
-								{/* Repetição */}
-								<b>Repetição:</b>{" "}
-								{med.repetition === "nao"
-									? "Não repetir"
-									: med.repetition === "diario"
-									? `Diariamente${
-											med.repetitionInterval
-												? ` (a cada ${med.repetitionInterval} dias)`
-												: ""
-									  }`
-									: med.repetition === "semanal"
-									? "Semanalmente"
-									: "Mensalmente"}{" "}
-								<br />
-								{/* Duração */}
-								{med.durationType === "sempre" && (
-									<>
-										<b>Duração:</b> Sempre <br />
-									</>
-								)}
-								{med.durationType === "quantidade" &&
-									med.durationAmount && (
-										<>
-											<b>Duração:</b> {med.durationAmount}{" "}
-											vezes <br />
-										</>
-									)}
-								{med.durationType === "data" &&
-									med.durationEndDate && (
-										<>
-											<b>Duração até:</b>{" "}
-											{new Date(
-												med.durationEndDate
-											).toLocaleDateString()}{" "}
-											<br />
-										</>
-									)}
-								{med.times && med.times.length > 0 && (
-									<>
-										<b>Horário(s):</b>{" "}
-										{med.times.join(", ")} <br />
-									</>
-								)}
-								{/* id_user removido */}
-							</div>
-							<div
-								style={{
-									display: "flex",
-									gap: 18,
-									marginTop: 10,
-								}}
-							>
-								<button
-									onClick={() => handleEdit(med.id)}
-									style={{
-										fontSize: "1.2rem",
-										padding: "12px 22px",
-										borderRadius: 10,
-										background: "#ffb300",
-										color: "#222",
-										border: "none",
-										cursor: "pointer",
-										fontWeight: "bold",
-										letterSpacing: 1,
-										transition: "background 0.2s",
-										display: "flex",
-										alignItems: "center",
-										gap: 8,
-									}}
-									aria-label={`Editar ${med.name}`}
-								>
-									<span role="img" aria-label="Editar"></span>{" "}
-									Editar
-								</button>
-								<button
-									onClick={() => handleDelete(med.id)}
-									style={{
-										fontSize: "1.2rem",
-										padding: "12px 22px",
-										borderRadius: 10,
-										background: "#e53935",
-										color: "#fff",
-										border: "none",
-										cursor: "pointer",
-										fontWeight: "bold",
-										letterSpacing: 1,
-										transition: "background 0.2s",
-										display: "flex",
-										alignItems: "center",
-										gap: 8,
-									}}
-									aria-label={`Excluir ${med.name}`}
-								>
-									<span
-										role="img"
-										aria-label="Excluir"
-									></span>{" "}
-									Excluir
-								</button>
-							</div>
-						</li>
-					))}
-				</ul>
 			</Paper>
 		</Box>
 	);

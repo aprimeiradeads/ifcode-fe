@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Alert from '@mui/material/Alert';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Typography, Box, Card, CardContent, Divider, Paper, Avatar } from '@mui/material';
 
@@ -41,8 +42,29 @@ const mockMedicines = [
 const MedicineDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const medicine = mockMedicines.find(med => med.id === id);
+
+  function handleEdit(medicineId: string) {
+    window.location.href = `/medicines/${medicineId}/edit`;
+  }
+
+  async function handleDelete(medicineId: string) {
+    if (window.confirm('Tem certeza que deseja excluir este medicamento?')) {
+      try {
+        const response = await fetch(`http://localhost:8080/remedio/${medicineId}`, {
+          method: 'DELETE',
+        });
+        if (!response.ok) throw new Error('Erro ao excluir medicamento');
+        setAlert({ type: 'success', message: 'Medicamento excluído com sucesso!' });
+        setTimeout(() => navigate('/home'), 1500);
+      } catch (err) {
+        console.log(err);
+        setAlert({ type: 'error', message: 'Erro ao excluir medicamento.' });
+      }
+    }
+  }
 
   if (!medicine) {
     return (
@@ -61,6 +83,13 @@ const MedicineDetail: React.FC = () => {
 
   return (
     <Box sx={{ width: '100vw', minHeight: '100vh', bgcolor: '#f4f8fc', py: 6 }}>
+      {alert && (
+        <Box sx={{ position: 'fixed', top: 24, left: 0, right: 0, maxWidth: 400, mx: 'auto', zIndex: 9999 }}>
+          <Alert severity={alert.type} onClose={() => setAlert(null)}>
+            {alert.message}
+          </Alert>
+        </Box>
+      )}
       <Paper elevation={6} sx={{ maxWidth: 600, mx: 'auto', p: { xs: 2, sm: 4 }, borderRadius: 4 }} role="main" aria-label="Detalhes do medicamento">
         <Typography
           variant="h3"
@@ -76,6 +105,12 @@ const MedicineDetail: React.FC = () => {
               <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#003366' }}>
                 {medicine.name}
               </Typography>
+              <Button variant="outlined" color="warning" sx={{ ml: 2 }} onClick={() => handleEdit(medicine.id)}>
+                Editar
+              </Button>
+              <Button variant="outlined" color="error" sx={{ ml: 1 }} onClick={() => handleDelete(medicine.id)}>
+                Excluir
+              </Button>
             </Box>
             <Divider sx={{ mb: 2 }} />
             {medicine.description && (
