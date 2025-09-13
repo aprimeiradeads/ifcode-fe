@@ -8,10 +8,26 @@ const clientId = '348278684462-f7fnir5fer4hd2b5v2hdpe9530v6cce5.apps.googleuserc
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
-    const handleSuccess = (credentialResponse: unknown) => {
+    const handleSuccess = (credentialResponse: any) => {
         alert('Login realizado com sucesso!');
         console.log(credentialResponse);
-        navigate('/home');
+
+				fetch('http://localhost:8080/api/auth/google', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'text/plain',
+					},
+					body: credentialResponse.credential,
+				})
+					.then((response) => response.json())
+					.then((data) => {
+						console.log('Success:', data);
+						localStorage.setItem('token', data.token);
+						navigate('/home');
+					})
+					.catch((error) => {
+						console.error('Error:', error);
+					});
     };
 
     const handleError = () => {
