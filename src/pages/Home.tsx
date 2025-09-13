@@ -12,29 +12,13 @@ import {
   Paper,
 } from "@mui/material";
 
-// Mock de medicamentos cadastrados
-const mockMedicines = [
-  {
-    id: "1",
-    name: "Paracetamol",
-    nextDate: new Date(), // hoje
-    time: "08:00",
-  },
-  {
-    id: "2",
-    name: "Ibuprofeno",
-    nextDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // amanhã
-    time: "12:00",
-  },
-  {
-    id: "3",
-    name: "Amoxicilina",
-    nextDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // depois de amanhã
-    time: "18:00",
-  },
-];
 
-function getDayLabel(date: Date) {
+import { useEffect, useState } from "react";
+import { getAllMedicines } from "../api/medicines";
+import type { Medicine } from "../types/api";
+
+
+function getDayLabel(date: string) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const d = new Date(date);
@@ -46,15 +30,43 @@ function getDayLabel(date: Date) {
   return d.toLocaleDateString();
 }
 
-const grouped = mockMedicines.reduce((acc, med) => {
-  const label = getDayLabel(med.nextDate);
-  if (!acc[label]) acc[label] = [];
-  acc[label].push(med);
-  return acc;
-}, {} as Record<string, typeof mockMedicines>);
+
+const groupByNextDate = (medicines: Medicine[]) => {
+  const grouped: Record<string, Medicine[]> = {};
+  medicines.forEach((med) => {
+    // Supondo que o backend retorna um campo 'times' e não 'nextDate', pegamos o próximo horário futuro
+    let nextDate = med.durationEndDate || new Date().toISOString();
+    if (med.times && med.times.length > 0) {
+      // Apenas para exibir, não é exato, pois depende da lógica de repetição
+      nextDate = new Date().toISOString();
+    }
+    const label = getDayLabel(nextDate);
+    if (!grouped[label]) grouped[label] = [];
+    grouped[label].push(med);
+  });
+  return grouped;
+};
+
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const [medicines, setMedicines] = useState<Medicine[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getAllMedicines()
+      .then((data) => {
+        setMedicines(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setError("Erro ao carregar medicamentos.");
+        setLoading(false);
+      });
+  }, []);
+
+  const grouped = groupByNextDate(medicines);
 
   return (
     <Box
@@ -90,7 +102,12 @@ const Home: React.FC = () => {
           }}
         >Meus Medicamentos
         </Typography>
-        {Object.keys(grouped).map((day) => (
+        {loading && <Typography>Carregando...</Typography>}
+        {error && <Typography color="error">{error}</Typography>}
+        {!loading && !error && Object.keys(grouped).length === 0 && (
+          <Typography>Nenhum medicamento cadastrado.</Typography>
+        )}
+        {!loading && !error && Object.keys(grouped).map((day) => (
           <Box key={day} sx={{ mb: 4 }}>
             <Typography
               variant="h6"
@@ -132,7 +149,7 @@ const Home: React.FC = () => {
                         {med.name}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        Horário: {med.time}
+                        {med.times && med.times.length > 0 ? `Horários: ${med.times.join(", ")}` : null}
                       </Typography>
                     </Box>
                   </CardContent>

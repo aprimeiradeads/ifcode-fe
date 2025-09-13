@@ -3,48 +3,31 @@ import Alert from '@mui/material/Alert';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Typography, Box, Card, CardContent, Divider, Paper, Avatar } from '@mui/material';
 
-// Mock data for medicines (similar to Home.tsx, but expanded for details)
-const mockMedicines = [
-  {
-    id: '1',
-    name: 'Paracetamol',
-    description: 'Analgésico e antitérmico',
-    dosage: '500mg',
-    repetition: 'diario',
-    repetitionInterval: 1,
-    durationType: 'sempre',
-    times: ['08:00', '20:00'],
-  },
-  {
-    id: '2',
-    name: 'Ibuprofeno',
-    description: 'Anti-inflamatório',
-    dosage: '200mg',
-    repetition: 'diario',
-    repetitionInterval: 2,
-    durationType: 'quantidade',
-    durationAmount: 10,
-    times: ['12:00'],
-  },
-  {
-    id: '3',
-    name: 'Amoxicilina',
-    description: 'Antibiótico',
-    dosage: '500mg',
-    repetition: 'diario',
-    repetitionInterval: 1,
-    durationType: 'data',
-    durationEndDate: '2025-09-20',
-    times: ['08:00', '18:00'],
-  },
-];
+
+import { useEffect } from 'react';
+import { getMedicineById } from '../api/medicines';
+import type { Medicine } from '../types/api';
+
 
 const MedicineDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [medicine, setMedicine] = useState<Medicine | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const medicine = mockMedicines.find(med => med.id === id);
+  useEffect(() => {
+    if (id) {
+      getMedicineById(id)
+        .then((data) => {
+          setMedicine(data);
+          setLoading(false);
+        })
+        .catch(() => {
+          setLoading(false);
+        });
+    }
+  }, [id]);
 
   function handleEdit(medicineId: string) {
     window.location.href = `/medicines/${medicineId}/edit`;
@@ -64,6 +47,19 @@ const MedicineDetail: React.FC = () => {
         setAlert({ type: 'error', message: 'Erro ao excluir medicamento.' });
       }
     }
+  }
+
+
+  if (loading) {
+    return (
+      <Box sx={{ width: '100vw', minHeight: '100vh', bgcolor: '#f4f8fc', py: 6 }}>
+        <Paper elevation={6} sx={{ maxWidth: 600, mx: 'auto', p: { xs: 2, sm: 4 }, borderRadius: 4, textAlign: 'center' }}>
+          <Typography variant="h4" sx={{ color: '#1976d2', fontWeight: 900, mb: 3 }}>
+            Carregando...
+          </Typography>
+        </Paper>
+      </Box>
+    );
   }
 
   if (!medicine) {
