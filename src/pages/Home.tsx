@@ -149,8 +149,8 @@ const Home: React.FC = () => {
                 elevation={2}
               >
                 <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                  {med.fotoUrl ? (
-                    <Avatar src={med.fotoUrl} sx={{ width: 48, height: 48 }} />
+                  {med.fotoBase64 ? (
+                    <Avatar src={med.fotoBase64} sx={{ width: 48, height: 48 }} />
                   ) : (
                     <Avatar sx={{ bgcolor: "#1976d2", width: 48, height: 48, fontWeight: 700, fontSize: 24 }}>
                       💊

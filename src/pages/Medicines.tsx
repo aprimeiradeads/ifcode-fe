@@ -10,6 +10,7 @@ import Alert from "@mui/material/Alert";
 
 import { addMedicine } from "../api/medicines";
 import type { Medicine } from "../types/api";
+import ImageInput from "../components/ImageInput";
 
 const Medicines: React.FC = () => {
     const navigate = useNavigate();
@@ -25,16 +26,38 @@ const Medicines: React.FC = () => {
     const [duracaoDataFinal, setDuracaoDataFinal] = useState("");
     const [times, setTimes] = useState<string[]>([""]);
     const [editId, setEditId] = useState<string | null>(null);
+    const [imageFile, setImageFile] = useState<File | null>(null);
 
     const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
 
-    const handleAddOrUpdate = (e: React.FormEvent) => {
+    const convertFileToBase64 = (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result as string);
+            reader.onerror = error => reject(error);
+        });
+    };
+
+    const handleAddOrUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!nome) return;
+        
+        let fotoBase64: string | undefined = undefined;
+        if (imageFile) {
+            try {
+                fotoBase64 = await convertFileToBase64(imageFile);
+            } catch (error) {
+                console.error("Erro ao converter imagem para base64:", error);
+                setAlert({ type: "error", message: "Erro ao processar a imagem." });
+                return;
+            }
+        }
+
         const med: Medicine = {
             nome: nome || "",
             descricao: descricao || "",
-            fotoUrl: undefined,
+            fotoBase64: fotoBase64 || "",
             dosagem: dosagem || "",
             repeticao: repeticao || "",
             repeticaoDias: repeticao === "diario" ? Number(repeticaoDias) : undefined,
@@ -67,6 +90,7 @@ const Medicines: React.FC = () => {
         setDuracao("sempre");
         setDuracaoTempo("");
         setDuracaoDataFinal("");
+        setImageFile(null);
     };
 
     return (
@@ -140,6 +164,12 @@ const Medicines: React.FC = () => {
                     autoComplete="off"
                     aria-label="Formulário de cadastro de medicamento"
                 >
+                    <label style={{ fontWeight: "bold", marginBottom: 2, fontSize: "1.15rem", textAlign: "center", display: "block" }}>
+                        Foto do medicamento
+                    </label>
+                    <ImageInput 
+                        onImageSelect={setImageFile}
+                    />
                     <label style={{ fontWeight: "bold", marginBottom: 2, fontSize: "1.15rem" }}>
                         Nome do medicamento
                     </label>
