@@ -97,9 +97,13 @@ const MedicineDetail: React.FC = () => {
         <Card sx={{ mb: 3, boxShadow: 2, borderRadius: 3, border: '2px solid #1976d2', bgcolor: '#fff' }}>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-              <Avatar sx={{ bgcolor: '#1976d2', width: 48, height: 48, fontWeight: 700, fontSize: 24 }}>💊</Avatar>
+              {medicine.fotoUrl ? (
+                <Avatar src={medicine.fotoUrl} sx={{ width: 48, height: 48 }} />
+              ) : (
+                <Avatar sx={{ bgcolor: '#1976d2', width: 48, height: 48, fontWeight: 700, fontSize: 24 }}>💊</Avatar>
+              )}
               <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#003366' }}>
-                {medicine.name}
+                {medicine.nome}
               </Typography>
               <Button
                 variant="outlined"
@@ -121,35 +125,31 @@ const MedicineDetail: React.FC = () => {
               </Button>
             </Box>
             <Divider sx={{ mb: 2 }} />
-            {medicine.description && (
+            {medicine.descricao && (
               <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Descrição:</strong> {medicine.description}
+                <strong>Descrição:</strong> {medicine.descricao}
               </Typography>
             )}
-            {medicine.dosage && (
+            {medicine.dosagem && (
               <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Dosagem:</strong> {medicine.dosage}
+                <strong>Dosagem:</strong> {medicine.dosagem}
               </Typography>
             )}
             <Typography variant="body1" sx={{ mb: 1 }}>
               <strong>Repetição:</strong> {
-                medicine.repetition === 'nao' ? 'Não repetir' :
-                medicine.repetition === 'diario' ? `Diariamente${medicine.repetitionInterval ? ` (a cada ${medicine.repetitionInterval} dias)` : ''}` :
-                medicine.repetition === 'semanal' ? 'Semanalmente' : 'Mensalmente'
+                medicine.repeticao === 'nao' ? 'Não repetir' :
+                medicine.repeticao === 'diario' ? `Diariamente${medicine.repeticaoDias ? ` (a cada ${medicine.repeticaoDias} dias)` : ''}` :
+                medicine.repeticao === 'semanal' ? `Semanalmente${medicine.repeticaoSemana ? ` (${medicine.repeticaoSemana})` : ''}` :
+                'Mensalmente'
               }
             </Typography>
             <Typography variant="body1" sx={{ mb: 1 }}>
               <strong>Duração:</strong> {
-                medicine.durationType === 'sempre' ? 'Sempre' :
-                medicine.durationType === 'quantidade' ? `${medicine.durationAmount} vezes` :
-                `Até ${new Date(medicine.durationEndDate!).toLocaleDateString()}`
+                medicine.duracao === 'sempre' ? 'Sempre' :
+                medicine.duracao === 'quantidade' ? `${medicine.duracaoTempo} vezes` :
+                medicine.duracao === 'data' && medicine.duracaoDataFinal ? `Até ${new Date(medicine.duracaoDataFinal).toLocaleDateString()}` : ''
               }
             </Typography>
-            {medicine.times && medicine.times.length > 0 && (
-              <Typography variant="body1" sx={{ mb: 1 }}>
-                <strong>Horário(s):</strong> {medicine.times.join(', ')}
-              </Typography>
-            )}
           </CardContent>
         </Card>
         <Button variant="contained" color="primary" onClick={() => navigate('/home')} sx={{ fontWeight: 'bold', fontSize: '1.1rem' }}>

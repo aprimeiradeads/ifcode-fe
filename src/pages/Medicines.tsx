@@ -14,18 +14,15 @@ import type { Medicine } from "../types/api";
 const Medicines: React.FC = () => {
 	const navigate = useNavigate();
 	const [medicines, setMedicines] = useState<Medicine[]>([]);
-	const [name, setName] = useState("");
-	const [description, setDescription] = useState("");
-	const [dosage, setDosage] = useState("");
-	const [repetition, setRepetition] = useState<
-		"nao" | "diario" | "semanal" | "mensal"
-	>("nao");
-	const [repetitionInterval, setRepetitionInterval] = useState("1"); // para "a cada X dias"
-	const [durationType, setDurationType] = useState<
-		"sempre" | "quantidade" | "data"
-	>("sempre");
-	const [durationAmount, setDurationAmount] = useState("");
-	const [durationEndDate, setDurationEndDate] = useState("");
+	const [nome, setNome] = useState("");
+	const [descricao, setDescricao] = useState("");
+	const [dosagem, setDosagem] = useState("");
+	const [repeticao, setRepeticao] = useState<string>("nao");
+	const [repeticaoDias, setRepeticaoDias] = useState("1");
+	const [repeticaoSemana, setRepeticaoSemana] = useState("");
+	const [duracao, setDuracao] = useState<string>("sempre");
+	const [duracaoTempo, setDuracaoTempo] = useState("");
+	const [duracaoDataFinal, setDuracaoDataFinal] = useState("");
 	const [times, setTimes] = useState<string[]>([""]);
 	const [editId, setEditId] = useState<string | null>(null);
 
@@ -33,24 +30,21 @@ const Medicines: React.FC = () => {
 
 	const handleAddOrUpdate = (e: React.FormEvent) => {
 		e.preventDefault();
-		if (!name) return;
+		if (!nome) return;
 		const med: Medicine = {
-			name,
-			description,
-			dosage,
-			repetition,
-			repetitionInterval:
-				repetition === "diario"
-					? Number(repetitionInterval)
-					: undefined,
-			durationType,
-			times: times.filter((t) => t),
+			id: "",
+			nome,
+			descricao,
+			dosagem,
+			usuario: { id: '', nome: '', login: '', senha: null, celular: '' },
+			fotoUrl: undefined,
+			repeticao,
+			repeticaoDias: repeticao === "diario" ? Number(repeticaoDias) : undefined,
+			repeticaoSemana: repeticao === "semanal" ? repeticaoSemana : undefined,
+			duracao,
+			duracaoTempo: duracao === "quantidade" ? Number(duracaoTempo) : undefined,
+			duracaoDataFinal: duracao === "data" ? duracaoDataFinal : undefined,
 		};
-		if (durationType === "quantidade") {
-			med.durationAmount = Number(durationAmount);
-		} else if (durationType === "data") {
-			med.durationEndDate = durationEndDate;
-		}
 		if (editId !== null) {
 			setMedicines(medicines.map((m) => (m.id === editId ? med : m)));
 			setEditId(null);
@@ -61,20 +55,20 @@ const Medicines: React.FC = () => {
 					navigate("/home");
 				})
 				.catch((err) => {
-                    console.log(med);
+					console.log(med);
 					setAlert({ type: "error", message: "Erro ao salvar medicamento." });
 					console.error(err);
 				});
 		}
-		setName("");
-		setDescription("");
-		setDosage("");
-		setRepetition("nao");
-		setRepetitionInterval("1");
-		setDurationType("sempre");
-		setDurationAmount("");
-		setDurationEndDate("");
-		setTimes([""]);
+		setNome("");
+		setDescricao("");
+		setDosagem("");
+		setRepeticao("nao");
+		setRepeticaoDias("1");
+		setRepeticaoSemana("");
+		setDuracao("sempre");
+		setDuracaoTempo("");
+		setDuracaoDataFinal("");
 	};
 
 	return (
@@ -151,8 +145,8 @@ const Medicines: React.FC = () => {
 					<TextField
 						label="Nome do medicamento"
 						variant="outlined"
-						value={name}
-						onChange={(e) => setName(e.target.value)}
+						value={nome}
+						onChange={(e) => setNome(e.target.value)}
 						required
 						fullWidth
 						style={{ marginBottom: 8 }}
@@ -160,8 +154,8 @@ const Medicines: React.FC = () => {
 					<TextField
 						label="Descrição"
 						variant="outlined"
-						value={description}
-						onChange={(e) => setDescription(e.target.value)}
+						value={descricao}
+						onChange={(e) => setDescricao(e.target.value)}
 						fullWidth
 						style={{ marginBottom: 8 }}
 					/>
@@ -169,22 +163,14 @@ const Medicines: React.FC = () => {
 						label="Dosagem"
 						variant="outlined"
 						placeholder="Ex: 1 comprimido, 10ml, 20 gotas"
-						value={dosage}
-						onChange={(e) => setDosage(e.target.value)}
+						value={dosagem}
+						onChange={(e) => setDosagem(e.target.value)}
 						fullWidth
 						style={{ marginBottom: 8 }}
 					/>
 					<Select
-						value={repetition}
-						onChange={(e) =>
-							setRepetition(
-								e.target.value as
-									| "nao"
-									| "diario"
-									| "semanal"
-									| "mensal"
-							)
-						}
+						value={repeticao}
+						onChange={(e) => setRepeticao(e.target.value)}
 						fullWidth
 						displayEmpty
 						style={{ marginBottom: 8 }}
@@ -194,7 +180,7 @@ const Medicines: React.FC = () => {
 						<MenuItem value="semanal">Semanalmente</MenuItem>
 						<MenuItem value="mensal">Mensalmente</MenuItem>
 					</Select>
-					{repetition === "diario" && (
+					{repeticao === "diario" && (
 						<div
 							style={{
 								display: "flex",
@@ -208,26 +194,17 @@ const Medicines: React.FC = () => {
 								type="number"
 								label="Intervalo (dias)"
 								variant="outlined"
-								value={repetitionInterval}
-								onChange={(e) =>
-									setRepetitionInterval(e.target.value)
-								}
+								value={repeticaoDias}
+								onChange={(e) => setRepeticaoDias(e.target.value)}
 								inputProps={{ min: 1 }}
 								style={{ width: 100 }}
 							/>
-							<span style={{ fontSize: "1.2rem" }}>horas</span>
+							<span style={{ fontSize: "1.2rem" }}>dias</span>
 						</div>
 					)}
 					<Select
-						value={durationType}
-						onChange={(e) =>
-							setDurationType(
-								e.target.value as
-									| "sempre"
-									| "quantidade"
-									| "data"
-							)
-						}
+						value={duracao}
+						onChange={(e) => setDuracao(e.target.value)}
 						fullWidth
 						style={{ marginBottom: 8 }}
 					>
@@ -235,25 +212,25 @@ const Medicines: React.FC = () => {
 						<MenuItem value="quantidade">Número de vezes</MenuItem>
 						<MenuItem value="data">Até data</MenuItem>
 					</Select>
-					{durationType === "quantidade" && (
+					{duracao === "quantidade" && (
 						<TextField
 							type="number"
 							label="Quantidade de vezes"
 							variant="outlined"
-							value={durationAmount}
-							onChange={(e) => setDurationAmount(e.target.value)}
+							value={duracaoTempo}
+							onChange={(e) => setDuracaoTempo(e.target.value)}
 							inputProps={{ min: 1 }}
 							fullWidth
 							style={{ marginBottom: 8 }}
 						/>
 					)}
-					{durationType === "data" && (
+					{duracao === "data" && (
 						<TextField
 							type="date"
 							label="Data final"
 							variant="outlined"
-							value={durationEndDate}
-							onChange={(e) => setDurationEndDate(e.target.value)}
+							value={duracaoDataFinal}
+							onChange={(e) => setDuracaoDataFinal(e.target.value)}
 							InputLabelProps={{ shrink: true }}
 							fullWidth
 							style={{ marginBottom: 8 }}

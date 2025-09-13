@@ -18,10 +18,11 @@ import { getAllMedicines } from "../api/medicines";
 import type { Medicine } from "../types/api";
 
 
-function getDayLabel(date: string) {
+function getDayLabel(dateStr: string) {
+  if (!dateStr) return "";
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const d = new Date(date);
+  const d = new Date(dateStr);
   d.setHours(0, 0, 0, 0);
   const diff = (d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
   if (diff === 0) return "Hoje";
@@ -34,14 +35,9 @@ function getDayLabel(date: string) {
 const groupByNextDate = (medicines: Medicine[]) => {
   const grouped: Record<string, Medicine[]> = {};
   medicines.forEach((med) => {
-    console.log(med);
-    // Supondo que o backend retorna um campo 'times' e não 'nextDate', pegamos o próximo horário futuro
-    let nextDate = med.durationEndDate || new Date().toISOString();
-    if (med.times && med.times.length > 0) {
-      // Apenas para exibir, não é exato, pois depende da lógica de repetição
-      nextDate = new Date().toISOString();
-    }
-    const label = getDayLabel(nextDate);
+    // Agrupa por data final da duração, se existir, senão "Sem data"
+    const nextDate = med.duracaoDataFinal || "Sem data";
+    const label = nextDate !== "Sem data" ? getDayLabel(nextDate) : "Sem data";
     if (!grouped[label]) grouped[label] = [];
     grouped[label].push(med);
   });
@@ -131,26 +127,32 @@ const Home: React.FC = () => {
                   elevation={2}
                 >
                   <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    <Avatar
-                      sx={{
-                        bgcolor: "#1976d2",
-                        width: 48,
-                        height: 48,
-                        fontWeight: 700,
-                        fontSize: 24,
-                      }}
-                    >
-                      💊
-                    </Avatar>
+                    {med.fotoUrl ? (
+                      <Avatar src={med.fotoUrl} sx={{ width: 48, height: 48 }} />
+                    ) : (
+                      <Avatar sx={{ bgcolor: "#1976d2", width: 48, height: 48, fontWeight: 700, fontSize: 24 }}>
+                        💊
+                      </Avatar>
+                    )}
                     <Box sx={{ flex: 1 }}>
-                      <Typography
-                        variant="h6"
-                        sx={{ fontWeight: 700, color: "#003366" }}
-                      >
-                        {med.name}
+                      <Typography variant="h6" sx={{ fontWeight: 700, color: "#003366" }}>
+                        {med.nome}
                       </Typography>
                       <Typography variant="body2" color="text.secondary">
-                        {med.times && med.times.length > 0 ? `Horários: ${med.times.join(", ")}` : null}
+                        {med.descricao}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Dosagem: {med.dosagem}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Repetição: {med.repeticao}
+                        {med.repeticaoDias ? `, a cada ${med.repeticaoDias} dias` : ""}
+                        {med.repeticaoSemana ? `, dias: ${med.repeticaoSemana}` : ""}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Duração: {med.duracao}
+                        {med.duracaoTempo ? `, tempo: ${med.duracaoTempo}` : ""}
+                        {med.duracaoDataFinal ? `, até: ${med.duracaoDataFinal}` : ""}
                       </Typography>
                     </Box>
                   </CardContent>
