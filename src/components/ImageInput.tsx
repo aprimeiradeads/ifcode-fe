@@ -1,15 +1,30 @@
 import React, { useState, useRef } from 'react';
-import { Box, IconButton, Typography } from '@mui/material';
-import { Close, AddPhotoAlternate } from '@mui/icons-material';
+import { Box, IconButton, Typography, Button } from '@mui/material';
+import { Close, AddPhotoAlternate, PhotoCamera } from '@mui/icons-material';
 
 interface ImageInputProps {
   onImageSelect: (file: File | null) => void;
   initialImage?: string;
+  resetTrigger?: boolean;
 }
 
-const ImageInput: React.FC<ImageInputProps> = ({ onImageSelect, initialImage }) => {
+const ImageInput: React.FC<ImageInputProps> = ({ onImageSelect, initialImage, resetTrigger }) => {
   const [image, setImage] = useState<string | null>(initialImage || null);
   const hiddenFileInput = useRef<HTMLInputElement>(null);
+  const hiddenCameraInput = useRef<HTMLInputElement>(null);
+
+  // Reset image when resetTrigger changes
+  React.useEffect(() => {
+    if (resetTrigger) {
+      setImage(null);
+      if (hiddenFileInput.current) {
+        hiddenFileInput.current.value = '';
+      }
+      if (hiddenCameraInput.current) {
+        hiddenCameraInput.current.value = '';
+      }
+    }
+  }, [resetTrigger]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -23,8 +38,12 @@ const ImageInput: React.FC<ImageInputProps> = ({ onImageSelect, initialImage }) 
     }
   };
 
-  const handleButtonClick = () => {
+  const handleFileUploadClick = () => {
     hiddenFileInput.current?.click();
+  };
+
+  const handleCameraClick = () => {
+    hiddenCameraInput.current?.click();
   };
 
   const handleRemoveImage = () => {
@@ -33,32 +52,20 @@ const ImageInput: React.FC<ImageInputProps> = ({ onImageSelect, initialImage }) 
     if (hiddenFileInput.current) {
       hiddenFileInput.current.value = '';
     }
+    if (hiddenCameraInput.current) {
+      hiddenCameraInput.current.value = '';
+    }
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: 250,
-        height: 250,
-        borderRadius: 3,
-        bgcolor: '#f0f4f8',
-        border: '2px dashed #b0c4de',
-        cursor: 'pointer',
-        overflow: 'hidden',
-        position: 'relative',
-        transition: 'all 0.3s ease',
-        mx: 'auto',
-        mb: 2,
-        '&:hover': {
-          borderColor: '#5a7d9a',
-          bgcolor: '#e6eef5',
-        },
-      }}
-      onClick={!image ? handleButtonClick : undefined}
-    >
+    <Box sx={{ 
+      width: '100%', 
+      mb: 2, 
+      maxWidth: '100%', 
+      overflow: 'hidden',
+      boxSizing: 'border-box',
+      margin: '0 auto'
+    }}>
       <input
         type="file"
         ref={hiddenFileInput}
@@ -66,13 +73,25 @@ const ImageInput: React.FC<ImageInputProps> = ({ onImageSelect, initialImage }) 
         style={{ display: 'none' }}
         accept="image/*"
       />
+      <input
+        type="file"
+        ref={hiddenCameraInput}
+        onChange={handleImageChange}
+        style={{ display: 'none' }}
+        accept="image/*"
+        capture="environment"
+      />
       
       {image ? (
         <Box
           sx={{
             position: 'relative',
             width: '100%',
-            height: '100%',
+            maxWidth: '100%',
+            height: 250,
+            borderRadius: 3,
+            overflow: 'hidden',
+            border: '2px solid #1976d2',
           }}
         >
           <Box
@@ -83,7 +102,6 @@ const ImageInput: React.FC<ImageInputProps> = ({ onImageSelect, initialImage }) 
               width: '100%',
               height: '100%',
               objectFit: 'cover',
-              borderRadius: 2.5,
             }}
           />
           <IconButton
@@ -108,20 +126,42 @@ const ImageInput: React.FC<ImageInputProps> = ({ onImageSelect, initialImage }) 
       ) : (
         <Box
           sx={{
+            width: '100%',
+            maxWidth: '100%',
+            minHeight: 200,
+            borderRadius: 3,
+            bgcolor: '#f0f4f8',
+            border: '2px dashed #b0c4de',
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',
-            width: '100%',
-            height: '100%',
-            color: '#a0a0a0',
-            textAlign: 'center',
+            p: 3,
+            boxSizing: 'border-box',
           }}
         >
-          <AddPhotoAlternate sx={{ fontSize: '4rem', mb: 1 }} />
-          <Typography variant="body2" sx={{ fontSize: '0.9rem' }}>
-            Clique para adicionar uma foto
+          <AddPhotoAlternate sx={{ fontSize: '4rem', mb: 2, color: '#a0a0a0' }} />
+          <Typography variant="body2" sx={{ fontSize: '1rem', mb: 3, color: '#666', textAlign: 'center' }}>
+            Adicione uma foto do medicamento
           </Typography>
+          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Button
+              variant="outlined"
+              startIcon={<PhotoCamera />}
+              onClick={handleCameraClick}
+              sx={{ minWidth: 140 }}
+            >
+              Tirar Foto
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<AddPhotoAlternate />}
+              onClick={handleFileUploadClick}
+              sx={{ minWidth: 140 }}
+            >
+              Galeria
+            </Button>
+          </Box>
         </Box>
       )}
     </Box>

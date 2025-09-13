@@ -8,7 +8,7 @@ import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Alert from "@mui/material/Alert";
 
-import { addMedicine } from "../api/medicines";
+import { addMedicine, uploadImageToImgBB } from "../api/medicines";
 import type { Medicine } from "../types/api";
 import ImageInput from "../components/ImageInput";
 
@@ -27,29 +27,21 @@ const Medicines: React.FC = () => {
     const [times, setTimes] = useState<string[]>([""]);
     const [editId, setEditId] = useState<string | null>(null);
     const [imageFile, setImageFile] = useState<File | null>(null);
+    const [resetImageTrigger, setResetImageTrigger] = useState<boolean>(false);
 
     const [alert, setAlert] = useState<{ type: "success" | "error"; message: string } | null>(null);
-
-    const convertFileToBase64 = (file: File): Promise<string> => {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result as string);
-            reader.onerror = error => reject(error);
-        });
-    };
 
     const handleAddOrUpdate = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!nome) return;
         
-        let fotoBase64: string | undefined = undefined;
+        let fotoUrl: string | undefined = undefined;
         if (imageFile) {
             try {
-                fotoBase64 = await convertFileToBase64(imageFile);
+                fotoUrl = await uploadImageToImgBB(imageFile);
             } catch (error) {
-                console.error("Erro ao converter imagem para base64:", error);
-                setAlert({ type: "error", message: "Erro ao processar a imagem." });
+                console.error("Erro ao fazer upload da imagem:", error);
+                setAlert({ type: "error", message: "Erro ao fazer upload da imagem." });
                 return;
             }
         }
@@ -57,7 +49,7 @@ const Medicines: React.FC = () => {
         const med: Medicine = {
             nome: nome || "",
             descricao: descricao || "",
-            fotoBase64: fotoBase64 || "",
+            fotoUrl: fotoUrl || "",
             dosagem: dosagem || "",
             repeticao: repeticao || "",
             repeticaoDias: repeticao === "diario" ? Number(repeticaoDias) : undefined,
@@ -79,8 +71,17 @@ const Medicines: React.FC = () => {
                     console.log(med);
                     setAlert({ type: "error", message: "Erro ao salvar medicamento." });
                     console.error(err);
+                    // Reset all fields including image on error
+                    resetFields();
                 });
         }
+        // Only reset fields on success for the edit case, for new medicine it navigates away
+        if (editId !== null) {
+            resetFields();
+        }
+    };
+
+    const resetFields = () => {
         setNome("");
         setDescricao("");
         setDosagem("");
@@ -91,6 +92,7 @@ const Medicines: React.FC = () => {
         setDuracaoTempo("");
         setDuracaoDataFinal("");
         setImageFile(null);
+        setResetImageTrigger(prev => !prev); // Toggle to trigger image reset
     };
 
     return (
@@ -164,11 +166,12 @@ const Medicines: React.FC = () => {
                     autoComplete="off"
                     aria-label="Formulário de cadastro de medicamento"
                 >
-                    <label style={{ fontWeight: "bold", marginBottom: 2, fontSize: "1.15rem", textAlign: "center", display: "block" }}>
+                    <label style={{ fontWeight: "bold", marginBottom: 8, fontSize: "1.15rem" }}>
                         Foto do medicamento
                     </label>
                     <ImageInput 
                         onImageSelect={setImageFile}
+                        resetTrigger={resetImageTrigger}
                     />
                     <label style={{ fontWeight: "bold", marginBottom: 2, fontSize: "1.15rem" }}>
                         Nome do medicamento

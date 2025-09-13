@@ -99,8 +99,8 @@ const MedicineDetail: React.FC = () => {
         <Card sx={{ mb: 3, boxShadow: 2, borderRadius: 3, border: '2px solid #1976d2', bgcolor: '#fff' }}>
           <CardContent>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-              {medicine.fotoBase64 ? (
-                <Avatar src={medicine.fotoBase64} sx={{ width: 48, height: 48 }} />
+              {medicine.fotoUrl ? (
+                <Avatar src={medicine.fotoUrl} sx={{ width: 48, height: 48 }} />
               ) : (
                 <Avatar sx={{ bgcolor: '#1976d2', width: 48, height: 48, fontWeight: 700, fontSize: 24 }}>💊</Avatar>
               )}

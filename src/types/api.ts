@@ -11,7 +11,7 @@ export interface Medicine {
 	id?: string;
 	nome: string;
 	descricao: string;
-	fotoBase64?: string;
+	fotoUrl?: string;
 	usuario?: Usuario;
 	dosagem: string;
 	repeticao: string;

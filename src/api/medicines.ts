@@ -2,6 +2,7 @@ import axios from "axios";
 import type { Medicine } from "../types/api";
 
 const API_BASE_URL = "https://ifcode-be.onrender.com";
+const IMGBB_API_KEY = "0171520a82a6944b6f3640f3a789582f";
 
 const API_MEDICINES_ENDPOINT = "/remedio/listar";
 const API_MEDICINES_CREATE_ENDPOINT = "/remedio/cadastrar";
@@ -62,4 +63,27 @@ const getMedicineById = async (id: string): Promise<Medicine | null> => {
 	}
 };
 
-export { addMedicine, getAllMedicines, getMedicineById };
+const uploadImageToImgBB = async (imageFile: File): Promise<string> => {
+	try {
+		const formData = new FormData();
+		formData.append("image", imageFile);
+		formData.append("key", IMGBB_API_KEY);
+
+		const response = await axios.post("https://api.imgbb.com/1/upload", formData, {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		});
+
+		if (response.data && response.data.data && response.data.data.url) {
+			return response.data.data.url;
+		} else {
+			throw new Error("Resposta inválida da API do ImgBB");
+		}
+	} catch (error) {
+		console.error("Erro ao fazer upload da imagem:", error);
+		throw error;
+	}
+};
+
+export { addMedicine, getAllMedicines, getMedicineById, uploadImageToImgBB };
