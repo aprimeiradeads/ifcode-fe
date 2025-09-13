@@ -12,6 +12,12 @@ import { addMedicine, uploadImageToImgBB } from "../api/medicines";
 import type { Medicine } from "../types/api";
 import ImageInput from "../components/ImageInput";
 
+const getCurrentDay = () => {
+    const days = ["domingo", "segunda", "terca", "quarta", "quinta", "sexta", "sabado"];
+    const today = new Date().getDay();
+    return days[today];
+};
+
 const Medicines: React.FC = () => {
     const navigate = useNavigate();
     const [medicines, setMedicines] = useState<Medicine[]>([]);
@@ -20,7 +26,7 @@ const Medicines: React.FC = () => {
     const [dosagem, setDosagem] = useState("");
     const [repeticao, setRepeticao] = useState<string>("diario");
     const [repeticaoDias, setRepeticaoDias] = useState("1");
-    const [repeticaoSemana, setRepeticaoSemana] = useState("");
+    const [repeticaoSemana, setRepeticaoSemana] = useState(getCurrentDay());
     const [duracao, setDuracao] = useState<string>("sempre");
     const [duracaoTempo, setDuracaoTempo] = useState("");
     const [duracaoDataFinal, setDuracaoDataFinal] = useState("");
@@ -86,9 +92,9 @@ const Medicines: React.FC = () => {
         setNome("");
         setDescricao("");
         setDosagem("");
-        setRepeticao("nao");
+        setRepeticao("diario");
         setRepeticaoDias("1");
-        setRepeticaoSemana("");
+        setRepeticaoSemana(getCurrentDay());
         setDuracao("sempre");
         setDuracaoTempo("");
         setDuracaoDataFinal("");
@@ -175,10 +181,9 @@ const Medicines: React.FC = () => {
                         resetTrigger={resetImageTrigger}
                     />
                     <label style={{ fontWeight: "bold", marginBottom: 2, fontSize: "1.15rem" }}>
-                        Nome do medicamento
+                        Nome do medicamento*
                     </label>
                     <TextField
-                        label="Nome do medicamento"
                         variant="outlined"
                         placeholder="Ex: Dipirona"
                         value={nome}
@@ -191,7 +196,6 @@ const Medicines: React.FC = () => {
                         Descrição
                     </label>
                     <TextField
-                        label="Descrição"
                         variant="outlined"
                         placeholder="Ex: Para dor de cabeça"
                         value={descricao}
@@ -203,7 +207,6 @@ const Medicines: React.FC = () => {
                         Dosagem
                     </label>
                     <TextField
-                        label="Dosagem"
                         variant="outlined"
                         placeholder="Ex: 1 comprimido, 10ml, 20 gotas"
                         value={dosagem}
@@ -234,10 +237,9 @@ const Medicines: React.FC = () => {
                                 alignItems: "center",
                             }}
                         >
-                            <span style={{ fontSize: "1.2rem" }}>A cada</span>
+                            <span style={{ fontSize: "1rem" }}>A cada</span>
                             <TextField
                                 type="number"
-                                label="Intervalo (dias)"
                                 variant="outlined"
                                 placeholder="Ex: 2"
                                 value={repeticaoDias}
@@ -245,7 +247,33 @@ const Medicines: React.FC = () => {
                                 inputProps={{ min: 1 }}
                                 style={{ width: 100 }}
                             />
-                            <span style={{ fontSize: "1.2rem" }}>dias</span>
+                            <span style={{ fontSize: "1rem" }}>dia(s)</span>
+                        </div>
+                    )}
+                    {repeticao === "semanal" && (
+                        <div
+                            style={{
+                                display: "flex",
+                                gap: 12,
+                                marginBottom: 8,
+                                alignItems: "center",
+                            }}
+                        >
+                            <span style={{ fontSize: "1rem" }}>Todo(a)</span>
+                            <Select
+                                value={repeticaoSemana}
+                                onChange={(e) => setRepeticaoSemana(e.target.value)}
+                                displayEmpty
+                                style={{ width: 240 }}
+                            >
+                                <MenuItem value="domingo">Domingo</MenuItem>
+                                <MenuItem value="segunda">Segunda-feira</MenuItem>
+                                <MenuItem value="terca">Terça-feira</MenuItem>
+                                <MenuItem value="quarta">Quarta-feira</MenuItem>
+                                <MenuItem value="quinta">Quinta-feira</MenuItem>
+                                <MenuItem value="sexta">Sexta-feira</MenuItem>
+                                <MenuItem value="sabado">Sábado</MenuItem>
+                            </Select>
                         </div>
                     )}
 
@@ -265,7 +293,6 @@ const Medicines: React.FC = () => {
                     {duracao === "quantidade" && (
                         <TextField
                             type="number"
-                            label="Quantidade de vezes"
                             variant="outlined"
                             placeholder="Ex: 10"
                             value={duracaoTempo}
@@ -278,7 +305,6 @@ const Medicines: React.FC = () => {
                     {duracao === "data" && (
                         <TextField
                             type="date"
-                            label="Data final"
                             variant="outlined"
                             placeholder="Ex: 2025-12-31"
                             value={duracaoDataFinal}
@@ -295,7 +321,7 @@ const Medicines: React.FC = () => {
                             fontSize: "1.15rem",
                         }}
                     >
-                        Horário(s) para tomar
+                        Horário(s) para tomar*
                     </label>
                     {times.map((time, idx) => (
                         <div
@@ -311,7 +337,7 @@ const Medicines: React.FC = () => {
                                 type="time"
                                 label={`Horário ${idx + 1}`}
                                 variant="outlined"
-                                placeholder="Ex: 08:00"
+                                required
                                 value={time}
                                 onChange={(e) => {
                                     const newTimes = [...times];
