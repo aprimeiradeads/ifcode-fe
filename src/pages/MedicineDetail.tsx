@@ -29,9 +29,6 @@ const MedicineDetail: React.FC = () => {
     }
   }, [id]);
 
-  function handleEdit(medicineId: string) {
-    window.location.href = `/medicines/${medicineId}/edit`;
-  }
 
   async function handleDelete(medicineId: string) {
     if (window.confirm('Tem certeza que deseja excluir este medicamento?')) {
@@ -110,15 +107,6 @@ const MedicineDetail: React.FC = () => {
               <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#003366' }}>
                 {medicine.nome}
               </Typography>
-              <Button
-                variant="outlined"
-                color="warning"
-                sx={{ ml: 2 }}
-                onClick={() => medicine.id && handleEdit(medicine.id)}
-                disabled={!medicine.id}
-              >
-                Editar
-              </Button>
               <Button
                 variant="outlined"
                 color="error"
