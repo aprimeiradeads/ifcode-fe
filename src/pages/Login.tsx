@@ -9,6 +9,8 @@ import Alert from '@mui/material/Alert';
 const clientId = '348278684462-f7fnir5fer4hd2b5v2hdpe9530v6cce5.apps.googleusercontent.com';
 const apiUrl = 'https://ifcode-be.onrender.com/api/auth/google';
 
+console.log("Atualizado:", import.meta.env);
+
 
 const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -25,7 +27,6 @@ const Login: React.FC = () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log('Success:', data);
                 localStorage.setItem('token', data.token);
                 setSuccessAlert(true);
                 setTimeout(() => {

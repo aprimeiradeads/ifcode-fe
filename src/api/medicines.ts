@@ -36,7 +36,7 @@ const getAllMedicines = async (): Promise<Medicine[]> => {
 				"Authorization": `Bearer ${localStorage.getItem("token")}`
 			}
 		});
-		return response.data.data;
+		return response.data;
 	} catch (error) {
 		console.error("Erro ao buscar medicamentos:", error);
 		throw error;
