@@ -25,7 +25,6 @@ const Login: React.FC = () => {
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log('Success:', data);
                 localStorage.setItem('token', data.token);
                 setSuccessAlert(true);
                 setTimeout(() => {
