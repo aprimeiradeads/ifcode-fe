@@ -35,7 +35,6 @@ function getDayLabel(dateStr: string) {
 const groupByNextDate = (medicines: Medicine[]) => {
   const grouped: Record<string, Medicine[]> = {};
   medicines.forEach((med) => {
-    // Agrupa por data final da duração, se existir, senão "Sem data"
     const nextDate = med.duracaoDataFinal || "Sem data";
     const label = nextDate !== "Sem data" ? getDayLabel(nextDate) : "Sem data";
     if (!grouped[label]) grouped[label] = [];
@@ -54,6 +53,11 @@ const Home: React.FC = () => {
   useEffect(() => {
     getAllMedicines()
       .then((data) => {
+        if (data.length === 0) {
+          setMedicines([]);
+          setLoading(false);
+          return;
+        }
         setMedicines(data);
         setLoading(false);
       })
@@ -64,6 +68,56 @@ const Home: React.FC = () => {
   }, []);
 
   const grouped = groupByNextDate(medicines);
+
+  if (!loading && !error && medicines.length === 0) {
+    return (
+      <Box
+        sx={{
+          width: "100vw",
+          minHeight: "100vh",
+          bgcolor: "#f4f8fc",
+          py: 6,
+        }}
+      >
+        <Paper
+          elevation={6}
+          sx={{
+            maxWidth: 600,
+            mx: "auto",
+            p: { xs: 2, sm: 4 },
+            borderRadius: 4,
+          }}
+          role="main"
+          aria-label="Página inicial de medicamentos"
+        >
+          <Typography
+            variant="h4"
+            gutterBottom
+            sx={{
+              fontSize: "2.5rem",
+              marginBottom: 4,
+              textAlign: "center",
+              color: "#1976d2",
+              letterSpacing: 1,
+              fontWeight: 900,
+              textShadow: "1px 1px 0 #fff",
+            }}
+          >Meus Medicamentos
+          </Typography>
+          <Typography>Nenhum medicamento cadastrado.</Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate("/medicines")}
+            fullWidth
+            sx={{ mt: 2, fontWeight: "bold", fontSize: "1.2rem" }}
+          >
+            Cadastrar novo medicamento
+          </Button>
+        </Paper>
+      </Box>
+    );
+  }
 
   return (
     <Box
