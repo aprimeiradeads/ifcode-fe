@@ -15,7 +15,8 @@ const addMedicine = async (medicine: Medicine): Promise<ApiResponse<Medicine>> =
 			medicine,
 			{
 				headers: {
-					"Content-Type": "application/json"
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${localStorage.getItem("token")}`
 				}
 			}
 		);
@@ -28,7 +29,12 @@ const addMedicine = async (medicine: Medicine): Promise<ApiResponse<Medicine>> =
 
 const getAllMedicines = async (): Promise<Medicine[]> => {
 	try {
-		const response = await axios.get<ApiResponse<Medicine[]>>(`${API_BASE_URL}${API_MEDICINES_ENDPOINT}`);
+		const response = await axios.get<ApiResponse<Medicine[]>>(`${API_BASE_URL}${API_MEDICINES_ENDPOINT}`,{
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${localStorage.getItem("token")}`
+			}
+		});
 		return response.data.data;
 	} catch (error) {
 		console.error("Erro ao buscar medicamentos:", error);
