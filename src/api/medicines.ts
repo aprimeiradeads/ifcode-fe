@@ -3,7 +3,7 @@ import type { Medicine, ApiResponse } from "../types/api";
 
 const API_BASE_URL = "https://ifcode-be.onrender.com";
 
-const API_MEDICINES_ENDPOINT = "/remedio";
+const API_MEDICINES_ENDPOINT = "/remedio/listar";
 const API_MEDICINES_CREATE_ENDPOINT = "/remedio/cadastrar";
 
 

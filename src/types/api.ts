@@ -3,7 +3,7 @@ interface User {
 }
 
 interface Medicine {
-	id: string;
+	id?: string;
 	name: string;
 	description: string;
 	dosage: string;

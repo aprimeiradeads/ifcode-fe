@@ -34,6 +34,7 @@ function getDayLabel(date: string) {
 const groupByNextDate = (medicines: Medicine[]) => {
   const grouped: Record<string, Medicine[]> = {};
   medicines.forEach((med) => {
+    console.log(med);
     // Supondo que o backend retorna um campo 'times' e não 'nextDate', pegamos o próximo horário futuro
     let nextDate = med.durationEndDate || new Date().toISOString();
     if (med.times && med.times.length > 0) {

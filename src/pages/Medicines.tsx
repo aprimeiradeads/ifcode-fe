@@ -35,7 +35,6 @@ const Medicines: React.FC = () => {
 		e.preventDefault();
 		if (!name) return;
 		const med: Medicine = {
-			id: editId ? editId : Date.now().toString(),
 			name,
 			description,
 			dosage,

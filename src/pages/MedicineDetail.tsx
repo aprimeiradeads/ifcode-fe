@@ -36,7 +36,7 @@ const MedicineDetail: React.FC = () => {
   async function handleDelete(medicineId: string) {
     if (window.confirm('Tem certeza que deseja excluir este medicamento?')) {
       try {
-        const response = await fetch(`http://localhost:8080/remedio/${medicineId}`, {
+        const response = await fetch(`https://ifcode-be.onrender.com/remedio/${medicineId}`, {
           method: 'DELETE',
         });
         if (!response.ok) throw new Error('Erro ao excluir medicamento');
@@ -101,10 +101,22 @@ const MedicineDetail: React.FC = () => {
               <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#003366' }}>
                 {medicine.name}
               </Typography>
-              <Button variant="outlined" color="warning" sx={{ ml: 2 }} onClick={() => handleEdit(medicine.id)}>
+              <Button
+                variant="outlined"
+                color="warning"
+                sx={{ ml: 2 }}
+                onClick={() => medicine.id && handleEdit(medicine.id)}
+                disabled={!medicine.id}
+              >
                 Editar
               </Button>
-              <Button variant="outlined" color="error" sx={{ ml: 1 }} onClick={() => handleDelete(medicine.id)}>
+              <Button
+                variant="outlined"
+                color="error"
+                sx={{ ml: 1 }}
+                onClick={() => medicine.id && handleDelete(medicine.id)}
+                disabled={!medicine.id}
+              >
                 Excluir
               </Button>
             </Box>
