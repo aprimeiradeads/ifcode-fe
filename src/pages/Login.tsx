@@ -10,7 +10,7 @@ const clientId = '348278684462-f7fnir5fer4hd2b5v2hdpe9530v6cce5.apps.googleuserc
 const apiUrl = 'https://ifcode-be.onrender.com/api/auth/google';
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
-console.log(import.meta.env);
+console.log("Atualizado:", import.meta.env);
 
 
 const Login: React.FC = () => {
