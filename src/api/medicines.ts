@@ -45,7 +45,16 @@ const getAllMedicines = async (): Promise<Medicine[]> => {
 
 const getMedicineById = async (id: string): Promise<Medicine | null> => {
 	try {
-		const response = await axios.get(`${API_BASE_URL}${API_MEDICINES_ENDPOINT}/${id}`);
+		const token = localStorage.getItem("token");
+		const response = await axios.get(
+			`${API_BASE_URL}${API_MEDICINES_ENDPOINT}/${id}`,
+			{
+				headers: {
+					"Content-Type": "application/json",
+					...(token ? { "Authorization": `Bearer ${token}` } : {})
+				}
+			}
+		);
 		return response.data.data;
 	} catch (error) {
 		console.error("Erro ao buscar medicamento por ID:", error);
