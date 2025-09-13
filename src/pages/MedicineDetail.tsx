@@ -20,7 +20,12 @@ const MedicineDetail: React.FC = () => {
     if (id) {
       getMedicineById(id)
         .then((data) => {
-          setMedicine(data);
+          // Se vier array, pega o primeiro item
+          if (Array.isArray(data)) {
+            setMedicine(data[0] || null);
+          } else {
+            setMedicine(data);
+          }
           setLoading(false);
         })
         .catch(() => {
@@ -80,7 +85,7 @@ const MedicineDetail: React.FC = () => {
   }
 
   return (
-    <Box sx={{ width: '100vw', minHeight: '100vh', bgcolor: '#f4f8fc', py: 6 }}>
+  <Box sx={{ width: '100vw', maxWidth: '100%', minHeight: '100vh', bgcolor: '#f4f8fc', py: 6 }}>
       {alert && (
         <Box sx={{ position: 'fixed', top: 24, left: 0, right: 0, maxWidth: 400, mx: 'auto', zIndex: 9999 }}>
           <Alert severity={alert.type} onClose={() => setAlert(null)}>
@@ -98,19 +103,66 @@ const MedicineDetail: React.FC = () => {
         </Typography>
         <Card sx={{ mb: 3, boxShadow: 2, borderRadius: 3, border: '2px solid #1976d2', bgcolor: '#fff' }}>
           <CardContent>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: { xs: 'flex-start', sm: 'center' },
+                flexDirection: { xs: 'column', sm: 'row' },
+                gap: 2,
+                mb: 2,
+              }}
+            >
               {medicine.fotoUrl ? (
-                <Avatar src={medicine.fotoUrl} sx={{ width: 48, height: 48 }} />
+                  <Avatar
+                    src={medicine.fotoUrl}
+                    sx={{
+                      width: { xs: '100%', sm: 120 },
+                      height: { xs: 120, sm: 120 },
+                      borderRadius: { xs: '6px 6px 0 0', sm: '50%' },
+                      alignSelf: { xs: 'center', sm: 'flex-start' },
+                      mx: { xs: 'auto', sm: 0 },
+                      objectFit: 'cover',
+                    }}
+                  />
               ) : (
-                <Avatar sx={{ bgcolor: '#1976d2', width: 48, height: 48, fontWeight: 700, fontSize: 24 }}>💊</Avatar>
+                  <Avatar
+                    sx={{
+                      bgcolor: '#1976d2',
+                      width: { xs: '100%', sm: 120 },
+                      height: { xs: 120, sm: 120 },
+                      borderRadius: { xs: '6px 6px 0 0', sm: '50%' },
+                      fontWeight: 700,
+                      fontSize: { xs: 64, sm: 64 },
+                      alignSelf: { xs: 'center', sm: 'flex-start' },
+                      mx: { xs: 'auto', sm: 0 },
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                    }}
+                  >
+                    💊
+                  </Avatar>
               )}
-              <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#003366' }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 'bold',
+                  color: '#003366',
+                  fontSize: '2.5rem',
+                  wordBreak: 'break-word',
+                  mt: { xs: 2, sm: 0 },
+                  mb: { xs: 1, sm: 0 },
+                  textAlign: { xs: 'center', sm: 'left' },
+                  width: { xs: '100%', sm: 'auto' },
+                }}
+              >
                 {medicine.nome}
               </Typography>
+              <Box sx={{ flex: 1 }} />
               <Button
                 variant="outlined"
                 color="error"
-                sx={{ ml: 1 }}
+                sx={{ ml: { xs: 0, sm: 1 }, alignSelf: { xs: 'flex-end', sm: 'center' }, width: { xs: '100%', sm: 'auto' } }}
                 onClick={() => medicine.id && handleDelete(medicine.id)}
                 disabled={!medicine.id}
               >
@@ -130,16 +182,18 @@ const MedicineDetail: React.FC = () => {
             )}
             <Typography variant="body1" sx={{ mb: 1 }}>
               <strong>Repetição:</strong> {
-                medicine.repeticao === 'diario' ? `Diariamente${medicine.repeticaoDias ? ` (a cada ${medicine.repeticaoDias} dias)` : ''}` :
-                medicine.repeticao === 'semanal' ? `Semanalmente${medicine.repeticaoSemana ? ` (${medicine.repeticaoSemana})` : ''}` :
-                'Mensalmente'
+                medicine.repeticao === 'DIARIO' ? `Diariamente${medicine.repeticaoDias ? ` (a cada ${medicine.repeticaoDias} dias)` : ''}` :
+                medicine.repeticao === 'SEMANAL' ? `Semanalmente${medicine.repeticaoSemana ? ` (${medicine.repeticaoSemana})` : ''}` :
+                medicine.repeticao === 'MENSAL' ? 'Mensalmente' :
+                medicine.repeticao || ''
               }
             </Typography>
             <Typography variant="body1" sx={{ mb: 1 }}>
               <strong>Duração:</strong> {
-                medicine.duracao === 'sempre' ? 'Sempre' :
-                medicine.duracao === 'quantidade' ? `${medicine.duracaoTempo} vezes` :
-                medicine.duracao === 'data' && medicine.duracaoDataFinal ? `Até ${new Date(medicine.duracaoDataFinal).toLocaleDateString()}` : ''
+                medicine.duracao === 'SEMPRE' ? 'Sempre' :
+                medicine.duracao === 'QUANTIDADE' ? `${medicine.duracaoTempo} vezes` :
+                medicine.duracao === 'DATA' && medicine.duracaoDataFinal ? `Até ${new Date(medicine.duracaoDataFinal).toLocaleDateString()}` :
+                medicine.duracao || ''
               }
             </Typography>
           </CardContent>
