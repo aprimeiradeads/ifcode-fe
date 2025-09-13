@@ -20,18 +20,19 @@
 
 .login-title {
   font-family: 'Inter', sans-serif;
-  font-size: 2.2em;
+  font-size: 3em;
   text-align: center;
 }
 
 .login-subtitle {
-  font-size: 1.1em;
+  font-size: 1.6em;
   margin-top: -8px;
   text-align: center;
 }
 
 .login-google {
   margin-top: 20px;
+  scale: 1.2;
 }
 
 @media (max-width: 600px) {
@@ -41,28 +42,29 @@
     padding: 12px;
   }
   .login-image {
-    width: 70px;
-    height: 70px;
+    width: 120px;
+    height: 120px;
     margin-bottom: 12px;
   }
   .login-title {
-    font-size: 1.4em;
+    font-size: 2em;
   }
   .login-subtitle {
-    font-size: 1em;
+    font-size: 1.5em;
   }
   .login-google {
     margin-top: 16px;
+    transform: scale(1.2);
   }
 }
 
 
 :root {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif !important;
   line-height: 1.5;
   font-weight: 400;
   color-scheme: light;
-  color: #2c1b1b;
+  color: #23265d;
   background-color: #ffffff;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -106,7 +108,7 @@ button {
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  font-family: inherit;
+  font-family: 'Inter', sans-serif;
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
