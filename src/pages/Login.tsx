@@ -7,7 +7,7 @@ import Alert from '@mui/material/Alert';
 
 
 const clientId = '348278684462-f7fnir5fer4hd2b5v2hdpe9530v6cce5.apps.googleusercontent.com';
-const apiUrl = 'https://ifcode-be.onrender.com/auth';
+const apiUrl = 'https://ifcode-be.onrender.com/users/auth';
 
 console.log("Atualizado:", import.meta.env);
 
