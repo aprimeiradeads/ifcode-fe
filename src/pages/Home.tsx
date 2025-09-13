@@ -1,38 +1,48 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button, Typography, Box, Divider, Card, CardContent, Avatar, Stack } from '@mui/material';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Button,
+  Typography,
+  Box,
+  Divider,
+  Card,
+  CardContent,
+  Avatar,
+  Stack,
+  Paper,
+} from "@mui/material";
 
 // Mock de medicamentos cadastrados
 const mockMedicines = [
   {
-    id: '1',
-    name: 'Paracetamol',
+    id: "1",
+    name: "Paracetamol",
     nextDate: new Date(), // hoje
-    time: '08:00',
+    time: "08:00",
   },
   {
-    id: '2',
-    name: 'Ibuprofeno',
+    id: "2",
+    name: "Ibuprofeno",
     nextDate: new Date(Date.now() + 24 * 60 * 60 * 1000), // amanhã
-    time: '12:00',
+    time: "12:00",
   },
   {
-    id: '3',
-    name: 'Amoxicilina',
+    id: "3",
+    name: "Amoxicilina",
     nextDate: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // depois de amanhã
-    time: '18:00',
+    time: "18:00",
   },
 ];
 
 function getDayLabel(date: Date) {
   const today = new Date();
-  today.setHours(0,0,0,0);
+  today.setHours(0, 0, 0, 0);
   const d = new Date(date);
-  d.setHours(0,0,0,0);
+  d.setHours(0, 0, 0, 0);
   const diff = (d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
-  if (diff === 0) return 'Hoje';
-  if (diff === 1) return 'Amanhã';
-  if (diff === 2) return 'Depois de amanhã';
+  if (diff === 0) return "Hoje";
+  if (diff === 1) return "Amanhã";
+  if (diff === 2) return "Depois de amanhã";
   return d.toLocaleDateString();
 }
 
@@ -47,52 +57,101 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Meus Medicamentos
-      </Typography>
-      {Object.keys(grouped).map(day => (
-        <Box key={day} sx={{ mb: 4 }}>
-          <Typography variant="h6" sx={{ mt: 2, mb: 2, color: '#1976d2', fontWeight: 700 }}>{day}</Typography>
-          <Stack spacing={2}>
-            {grouped[day].map(med => (
-              <Card
-                key={med.id}
-                sx={{
-                  cursor: 'pointer',
-                  transition: 'box-shadow 0.2s',
-                  '&:hover': { boxShadow: 6, background: '#f0f7ff' },
-                  borderRadius: 3,
-                  border: '1.5px solid #1976d2',
-                }}
-                onClick={() => navigate(`/medicines/${med.id}`)}
-                elevation={2}
-              >
-                <CardContent sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                  <Avatar sx={{ bgcolor: '#1976d2', width: 48, height: 48, fontWeight: 700, fontSize: 24 }}>
-                    💊
-                  </Avatar>
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, color: '#003366' }}>{med.name}</Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      Horário: {med.time}
-                    </Typography>
-                  </Box>
-                </CardContent>
-              </Card>
-            ))}
-          </Stack>
-          <Divider sx={{ mt: 3 }} />
-        </Box>
-      ))}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={() => navigate('/medicines')}
-        sx={{ mt: 2 }}
+    <Box
+      sx={{
+        width: "100vw",
+        minHeight: "100vh",
+        bgcolor: "#f4f8fc",
+        py: 6,
+      }}
+    >
+      <Paper
+        elevation={6}
+        sx={{
+          maxWidth: 600,
+          mx: "auto",
+          p: { xs: 2, sm: 4 },
+          borderRadius: 4,
+        }}
+        role="main"
+        aria-label="Página inicial de medicamentos"
       >
-        Cadastrar novo medicamento
-      </Button>
+        <Typography
+          variant="h4"
+          gutterBottom
+          sx={{
+            fontSize: "2.5rem",
+            marginBottom: 4,
+            textAlign: "center",
+            color: "#1976d2",
+            letterSpacing: 1,
+            fontWeight: 900,
+            textShadow: "1px 1px 0 #fff",
+          }}
+        >Meus Medicamentos
+        </Typography>
+        {Object.keys(grouped).map((day) => (
+          <Box key={day} sx={{ mb: 4 }}>
+            <Typography
+              variant="h6"
+              sx={{ mt: 2, mb: 2, color: "#1976d2", fontWeight: 700 }}
+            >
+              {day}
+            </Typography>
+            <Stack spacing={2}>
+              {grouped[day].map((med) => (
+                <Card
+                  key={med.id}
+                  sx={{
+                    cursor: "pointer",
+                    transition: "box-shadow 0.2s",
+                    "&:hover": { boxShadow: 6, background: "#f0f7ff" },
+                    borderRadius: 3,
+                    border: "2px solid #1976d2",
+                  }}
+                  onClick={() => navigate(`/medicines/${med.id}`)}
+                  elevation={2}
+                >
+                  <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                    <Avatar
+                      sx={{
+                        bgcolor: "#1976d2",
+                        width: 48,
+                        height: 48,
+                        fontWeight: 700,
+                        fontSize: 24,
+                      }}
+                    >
+                      💊
+                    </Avatar>
+                    <Box sx={{ flex: 1 }}>
+                      <Typography
+                        variant="h6"
+                        sx={{ fontWeight: 700, color: "#003366" }}
+                      >
+                        {med.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        Horário: {med.time}
+                      </Typography>
+                    </Box>
+                  </CardContent>
+                </Card>
+              ))}
+            </Stack>
+            <Divider sx={{ mt: 3 }} />
+          </Box>
+        ))}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => navigate("/medicines")}
+          fullWidth
+          sx={{ mt: 2, fontWeight: "bold", fontSize: "1.2rem" }}
+        >
+          Cadastrar novo medicamento
+        </Button>
+      </Paper>
     </Box>
   );
 };

@@ -1,10 +1,6 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-<<<<<<< HEAD
-import { Button, Typography, Box, Card, CardContent, Divider } from '@mui/material';
-=======
 import { Button, Typography, Box, Card, CardContent, Divider, Paper, Avatar } from '@mui/material';
->>>>>>> c78ab244cb67b5174ca3d2e2a33095120202e97a
 
 // Mock data for medicines (similar to Home.tsx, but expanded for details)
 const mockMedicines = [
@@ -50,13 +46,6 @@ const MedicineDetail: React.FC = () => {
 
   if (!medicine) {
     return (
-<<<<<<< HEAD
-      <Box sx={{ p: 3 }}>
-        <Typography variant="h4">Medicamento não encontrado</Typography>
-        <Button variant="contained" onClick={() => navigate('/home')}>
-          Voltar para Home
-        </Button>
-=======
       <Box sx={{ width: '100vw', minHeight: '100vh', bgcolor: '#f4f8fc', py: 6 }}>
         <Paper elevation={6} sx={{ maxWidth: 600, mx: 'auto', p: { xs: 2, sm: 4 }, borderRadius: 4, textAlign: 'center' }}>
           <Typography variant="h4" sx={{ color: '#e53935', fontWeight: 900, mb: 3 }}>
@@ -66,58 +55,11 @@ const MedicineDetail: React.FC = () => {
             Voltar para Home
           </Button>
         </Paper>
->>>>>>> c78ab244cb67b5174ca3d2e2a33095120202e97a
       </Box>
     );
   }
 
   return (
-<<<<<<< HEAD
-    <Box sx={{ p: 3, maxWidth: 600, mx: 'auto' }}>
-      <Typography variant="h4" gutterBottom>
-        Detalhes do Medicamento
-      </Typography>
-      <Card sx={{ mb: 3 }}>
-        <CardContent>
-          <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-            {medicine.name}
-          </Typography>
-          <Divider sx={{ mb: 2 }} />
-          {medicine.description && (
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Descrição:</strong> {medicine.description}
-            </Typography>
-          )}
-          {medicine.dosage && (
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Dosagem:</strong> {medicine.dosage}
-            </Typography>
-          )}
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Repetição:</strong> {
-              medicine.repetition === 'nao' ? 'Não repetir' :
-              medicine.repetition === 'diario' ? `Diariamente${medicine.repetitionInterval ? ` (a cada ${medicine.repetitionInterval} dias)` : ''}` :
-              medicine.repetition === 'semanal' ? 'Semanalmente' : 'Mensalmente'
-            }
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 1 }}>
-            <strong>Duração:</strong> {
-              medicine.durationType === 'sempre' ? 'Sempre' :
-              medicine.durationType === 'quantidade' ? `${medicine.durationAmount} vezes` :
-              `Até ${new Date(medicine.durationEndDate!).toLocaleDateString()}`
-            }
-          </Typography>
-          {medicine.times && medicine.times.length > 0 && (
-            <Typography variant="body1" sx={{ mb: 1 }}>
-              <strong>Horário(s):</strong> {medicine.times.join(', ')}
-            </Typography>
-          )}
-        </CardContent>
-      </Card>
-      <Button variant="outlined" onClick={() => navigate('/home')}>
-        Voltar para Home
-      </Button>
-=======
     <Box sx={{ width: '100vw', minHeight: '100vh', bgcolor: '#f4f8fc', py: 6 }}>
       <Paper elevation={6} sx={{ maxWidth: 600, mx: 'auto', p: { xs: 2, sm: 4 }, borderRadius: 4 }} role="main" aria-label="Detalhes do medicamento">
         <Typography
@@ -171,7 +113,6 @@ const MedicineDetail: React.FC = () => {
           Voltar para Home
         </Button>
       </Paper>
->>>>>>> c78ab244cb67b5174ca3d2e2a33095120202e97a
     </Box>
   );
 };
