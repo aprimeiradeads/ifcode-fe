@@ -4,7 +4,6 @@ import {
   Button,
   Typography,
   Box,
-  Divider,
   Card,
   CardContent,
   Avatar,
@@ -18,30 +17,6 @@ import { getAllMedicines } from "../api/medicines";
 import type { Medicine } from "../types/api";
 
 
-function getDayLabel(dateStr: string) {
-  if (!dateStr) return "";
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const d = new Date(dateStr);
-  d.setHours(0, 0, 0, 0);
-  const diff = (d.getTime() - today.getTime()) / (1000 * 60 * 60 * 24);
-  if (diff === 0) return "Hoje";
-  if (diff === 1) return "Amanhã";
-  if (diff === 2) return "Depois de amanhã";
-  return d.toLocaleDateString();
-}
-
-
-const groupByNextDate = (medicines: Medicine[]) => {
-  const grouped: Record<string, Medicine[]> = {};
-  medicines.forEach((med) => {
-    const nextDate = med.duracaoDataFinal || "Sem data";
-    const label = nextDate !== "Sem data" ? getDayLabel(nextDate) : "Sem data";
-    if (!grouped[label]) grouped[label] = [];
-    grouped[label].push(med);
-  });
-  return grouped;
-};
 
 
 const Home: React.FC = () => {
@@ -67,7 +42,7 @@ const Home: React.FC = () => {
       });
   }, []);
 
-  const grouped = groupByNextDate(medicines);
+
 
   if (!loading && !error && medicines.length === 0) {
     return (
@@ -155,67 +130,58 @@ const Home: React.FC = () => {
         </Typography>
         {loading && <Typography>Carregando...</Typography>}
         {error && <Typography color="error">{error}</Typography>}
-        {!loading && !error && Object.keys(grouped).length === 0 && (
+        {!loading && !error && medicines.length === 0 && (
           <Typography>Nenhum medicamento cadastrado.</Typography>
         )}
-        {!loading && !error && Object.keys(grouped).map((day) => (
-          <Box key={day} sx={{ mb: 4 }}>
-            <Typography
-              variant="h6"
-              sx={{ mt: 2, mb: 2, color: "#1976d2", fontWeight: 700 }}
-            >
-              {day}
-            </Typography>
-            <Stack spacing={2}>
-              {grouped[day].map((med) => (
-                <Card
-                  key={med.id}
-                  sx={{
-                    cursor: "pointer",
-                    transition: "box-shadow 0.2s",
-                    "&:hover": { boxShadow: 6, background: "#f0f7ff" },
-                    borderRadius: 3,
-                    border: "2px solid #1976d2",
-                  }}
-                  onClick={() => navigate(`/medicines/${med.id}`)}
-                  elevation={2}
-                >
-                  <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-                    {med.fotoUrl ? (
-                      <Avatar src={med.fotoUrl} sx={{ width: 48, height: 48 }} />
-                    ) : (
-                      <Avatar sx={{ bgcolor: "#1976d2", width: 48, height: 48, fontWeight: 700, fontSize: 24 }}>
-                        💊
-                      </Avatar>
-                    )}
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="h6" sx={{ fontWeight: 700, color: "#003366" }}>
-                        {med.nome}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {med.descricao}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Dosagem: {med.dosagem}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Repetição: {med.repeticao}
-                        {med.repeticaoDias ? `, a cada ${med.repeticaoDias} dias` : ""}
-                        {med.repeticaoSemana ? `, dias: ${med.repeticaoSemana}` : ""}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Duração: {med.duracao}
-                        {med.duracaoTempo ? `, tempo: ${med.duracaoTempo}` : ""}
-                        {med.duracaoDataFinal ? `, até: ${med.duracaoDataFinal}` : ""}
-                      </Typography>
-                    </Box>
-                  </CardContent>
-                </Card>
-              ))}
-            </Stack>
-            <Divider sx={{ mt: 3 }} />
-          </Box>
-        ))}
+        {!loading && !error && (
+          <Stack spacing={2}>
+            {medicines.map((med) => (
+              <Card
+                key={med.id}
+                sx={{
+                  cursor: "pointer",
+                  transition: "box-shadow 0.2s",
+                  "&:hover": { boxShadow: 6, background: "#f0f7ff" },
+                  borderRadius: 3,
+                  border: "2px solid #1976d2",
+                }}
+                onClick={() => navigate(`/medicines/${med.id}`)}
+                elevation={2}
+              >
+                <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  {med.fotoUrl ? (
+                    <Avatar src={med.fotoUrl} sx={{ width: 48, height: 48 }} />
+                  ) : (
+                    <Avatar sx={{ bgcolor: "#1976d2", width: 48, height: 48, fontWeight: 700, fontSize: 24 }}>
+                      💊
+                    </Avatar>
+                  )}
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: "#003366" }}>
+                      {med.nome}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {med.descricao}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Dosagem: {med.dosagem}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Repetição: {med.repeticao}
+                      {med.repeticaoDias ? `, a cada ${med.repeticaoDias} dias` : ""}
+                      {med.repeticaoSemana ? `, dias: ${med.repeticaoSemana}` : ""}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Duração: {med.duracao}
+                      {med.duracaoTempo ? `, tempo: ${med.duracaoTempo}` : ""}
+                      {med.duracaoDataFinal ? `, até: ${med.duracaoDataFinal}` : ""}
+                    </Typography>
+                  </Box>
+                </CardContent>
+              </Card>
+            ))}
+          </Stack>
+        )}
         <Button
           variant="contained"
           color="primary"

@@ -20,6 +20,7 @@ const addMedicine = async (medicine: Medicine): Promise<unknown> => {
 				}
 			}
 		);
+		console.log(response);
 		return response.data;
 	} catch (error) {
 		console.error("Erro ao adicionar medicamento:", error);

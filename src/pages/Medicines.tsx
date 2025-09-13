@@ -187,7 +187,6 @@ const Medicines: React.FC = () => {
                         displayEmpty
                         style={{ marginBottom: 8 }}
                     >
-                        <MenuItem value="nao">Não repetir</MenuItem>
                         <MenuItem value="diario">Diariamente</MenuItem>
                         <MenuItem value="semanal">Semanalmente</MenuItem>
                         <MenuItem value="mensal">Mensalmente</MenuItem>

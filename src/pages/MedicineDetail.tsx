@@ -137,7 +137,6 @@ const MedicineDetail: React.FC = () => {
             )}
             <Typography variant="body1" sx={{ mb: 1 }}>
               <strong>Repetição:</strong> {
-                medicine.repeticao === 'nao' ? 'Não repetir' :
                 medicine.repeticao === 'diario' ? `Diariamente${medicine.repeticaoDias ? ` (a cada ${medicine.repeticaoDias} dias)` : ''}` :
                 medicine.repeticao === 'semanal' ? `Semanalmente${medicine.repeticaoSemana ? ` (${medicine.repeticaoSemana})` : ''}` :
                 'Mensalmente'
