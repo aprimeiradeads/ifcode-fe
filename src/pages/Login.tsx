@@ -21,7 +21,7 @@ const Login: React.FC = () => {
                 <img className="login-image" src={medicineImg} alt="medicamento" />
                 <h1 className="login-title">Bem-vindo ao Medica+</h1>
                 <p className="login-subtitle">O tempo certo para viver melhor.</p>
-                <div className="login-google">
+                <div className="login-google" style={{ marginTop: 32 }}>
                     <GoogleLogin onSuccess={handleSuccess} onError={handleError} />
                 </div>
             </div>
