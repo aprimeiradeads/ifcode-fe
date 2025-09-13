@@ -36,13 +36,41 @@ const Alerts: React.FC = () => {
   }, [now]);
 
   return (
-    <div style={{ maxWidth: 400, margin: '40px auto', padding: 20, border: '1px solid #ccc', borderRadius: 8 }}>
-      <h2>Lembretes de Medicamentos</h2>
-      <p>Agora: {now}</p>
-      <ul style={{ marginTop: 20 }}>
+    <div
+      style={{
+        maxWidth: 600,
+        margin: '40px auto',
+        padding: 40,
+        border: '2px solid #888',
+        borderRadius: 16,
+        background: '#f9f9f9',
+        fontSize: '1.5rem',
+        lineHeight: 1.7,
+      }}
+    >
+      <h2 style={{ fontSize: '2.5rem', marginBottom: 32 }}>Lembretes de Medicamentos</h2>
+      <p style={{ fontSize: '1.4rem', marginBottom: 24 }}>Agora: <b>{now}</b></p>
+      <ul style={{ marginTop: 32, padding: 0, listStyle: 'none' }}>
         {alerts.map(alert => (
-          <li key={alert.id} style={{ marginBottom: 10, color: alert.triggered ? 'gray' : 'black' }}>
-            <b>{alert.medicine}</b> - {alert.time} {alert.triggered && '(Lembrete enviado)'}
+          <li
+            key={alert.id}
+            style={{
+              marginBottom: 24,
+              padding: 20,
+              background: alert.triggered ? '#eee' : '#fff',
+              borderRadius: 12,
+              boxShadow: '0 2px 8px #0001',
+              color: alert.triggered ? 'gray' : 'black',
+              fontSize: '1.4rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <span>
+              <b style={{ fontSize: '1.6rem' }}>{alert.medicine}</b> - {alert.time}
+              {alert.triggered && <span style={{ marginLeft: 12, fontSize: '1.2rem' }}>(Lembrete enviado)</span>}
+            </span>
           </li>
         ))}
       </ul>
